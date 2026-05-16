@@ -1,4 +1,5 @@
 pipeline {
+
     agent any
 
     tools {
@@ -7,7 +8,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "attendance-management-system"
+        AWS_REGION = 'ap-south-1'
+        ECR_REPO = 'http://971586140507.dkr.ecr.ap-south-1.amazonaws.com/attendance-management-system'
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
@@ -34,7 +36,40 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
+                bat 'docker build -t attendance-management-system:%BUILD_NUMBER% .'
+            }
+        }
+
+        stage('Login to AWS ECR') {
+            steps {
+
+                withAWS(credentials: 'aws-credentials', region: 'ap-south-1') {
+
+                    bat '''
+                    aws ecr get-login-password --region %AWS_REGION% | docker login --username AWS --password-stdin %ECR_REPO%
+                    '''
+                }
+
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+
+                bat '''
+                docker tag attendance-management-system:%BUILD_NUMBER% %ECR_REPO%:%BUILD_NUMBER%
+                '''
+
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+
+                bat '''
+                docker push %ECR_REPO%:%BUILD_NUMBER%
+                '''
+
             }
         }
 
@@ -51,4 +86,5 @@ pipeline {
         }
 
     }
+
 }
