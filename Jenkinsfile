@@ -108,7 +108,7 @@ ${env.BUILD_URL}
 
         failure {
 
-            mail to: 'yourgmail@gmail.com',
+            mail to: 'piyushchhagani03@gmail.com',
             subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """
 Build Failed!
