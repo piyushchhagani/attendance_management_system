@@ -89,7 +89,7 @@ pipeline {
 
         success {
 
-            mail to: 'yourgmail@gmail.com',
+            mail to: 'piyushchhagani03@gmail.com',
             subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """
 Build Successful!
